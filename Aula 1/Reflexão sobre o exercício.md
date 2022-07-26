@@ -1,0 +1,9 @@
+## Perguntas exemplo
+- Hoje eu aprendi...
+- Gostaria de ter aprendido...
+- Preciso aprender...
+
+### Respostas
+- Aprendi sobre a metodologia do CBL (Challenge Based Learning), que nos auxilia a 
+- ,
+-  
