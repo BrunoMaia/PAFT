@@ -4,6 +4,6 @@
 - Preciso aprender...
 
 ### Respostas
-- Aprendi sobre a metodologia do CBL (Challenge Based Learning), que nos auxilia a 
-- ,
--  
+- Aprendi sobre a metodologia do CBL (Challenge Based Learning), que nos auxilia a aprender conteúdos de forma ativa. O benefício do método é que o aprendizado é "real", sendo assim internalizado e não tão facilmente esquecido. 
+- No contexto do método, acho que foi tudo bem explicado e ficou bem claro. Mas gostaria de ter aprendido alguma softskill, pois fazer a gestão das ideias e perfis do grupo foi um desafio. 
+- As outras etapas do método e como trabalhar/gerenciar as divergências no grupo, tanto de perfil quanto de conhecimento, para que possamos ter a melhor experiência de aprendizado.
