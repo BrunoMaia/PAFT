@@ -1,5 +1,5 @@
 import platform    
-from subprocess import Popen, PIPE 
+from subprocess import Popen, PIPE, call
 
 def PingHost(host:str, quantidade:str):
     """
@@ -10,7 +10,7 @@ def PingHost(host:str, quantidade:str):
     parametro = '-n' if platform.system().lower()=='windows' else '-c'
     comando = ['ping', parametro, quantidade, host]
     resultado = ""
-    process = Popen(command,stdout=PIPE,stderr=PIPE)
+    process = Popen(comando,stdout=PIPE,stderr=PIPE)
     stdout,stderr = process.communicate()
-    return ((subprocess.call(command) == 0),stdout.decode('ISO-8859-1'))
+    return ((call(comando) == 0),stdout.decode('ISO-8859-1'))
 
