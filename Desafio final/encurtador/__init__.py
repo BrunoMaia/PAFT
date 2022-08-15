@@ -7,6 +7,10 @@ from dotenv import dotenv_values
 VariaveisAmbiente = dotenv_values(join(dirname(__file__), 'variaveis.env'))
 
 def EncurtaUrl(url:str):
+    """ Esta função faz a chamada da API da tinyurl, encurtando um link passado como parâmetro
+    :url -> string com o caminho a url a ser encurtada
+    :retorno -> retorna uma string com a url encurtada
+    """
     Cabecalho = {'accept': 'application/json'}
     ApiToken = VariaveisAmbiente['API_TOKEN']
     Parametros = {'api_token': ApiToken}
