@@ -1,16 +1,17 @@
 import platform    
 from subprocess import Popen, PIPE, call
 
-def PingHost(host:str, quantidade:str):
+def PingHost(Host:str, Quantidade:str):
     """
-    Retorna uma tupla com a resposta e o resultado verboso do ping
+    Esta função faz uma chamada ao sistema, para rodar o comando de ping, retornando a resposta obtida.
+    :Host -> uma string com o caminho do host, podendo ser um ip ou caminho dns
+    :Quantidade -> quantidade de execuções do ping, é uma string
+    :retorno -> tupla(bool -> resposta do host aos pings, string -> resposta completa do sistema, descrevendo o ping)
     """
-    # Option for the number of packets as a function of
-    # param = '-n' if platform.system().lower()=='windows' else '-c'
-    parametro = '-n' if platform.system().lower()=='windows' else '-c'
-    comando = ['ping', parametro, quantidade, host]
-    resultado = ""
-    process = Popen(comando,stdout=PIPE,stderr=PIPE)
-    stdout,stderr = process.communicate()
-    return ((call(comando) == 0),stdout.decode('ISO-8859-1'))
+    Parametro = '-n' if platform.system().lower()=='windows' else '-c'
+    Comando = ['ping', Parametro, Quantidade, Host]
+    Resultado = ""
+    Processo = Popen(Comando,stdout=PIPE,stderr=PIPE)
+    stdout,stderr = Processo.communicate()
+    return ((call(Comando) == 0),stdout.decode('ISO-8859-1'))
 
