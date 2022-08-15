@@ -1,8 +1,13 @@
 from ping import PingHost
 from gerador_senha import GeraSenha
+from encurtador import EncurtaUrl
+from qrcoder import CriaQRCODE
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QMessageBox
+from PyQt5.QtWidgets import QMessageBox, QApplication
+from PyQt5.QtGui import QPixmap
 import traceback
+import pyperclip
+from art import *
 
 class InterfaceUsuario(object):
     def ExibeJanelaErro(self, erro: str):
@@ -36,20 +41,50 @@ class InterfaceUsuario(object):
         self.resultado_ping_av.setText(ResultadoPing[1])
         return True
     
-    def ChamaGeradorSenha(self):
+    @Sandbox
+    def ChamaGeradorSenha(self, *args, **kwargs):
         TamanhoSenha = int(self.tamanho_senha.value())
         TamanhoEspeciais = int(self.qtd_chars_especial.value())
         SenhaGerada = GeraSenha(TamanhoSenha, TamanhoEspeciais)
+        Copiar = QApplication.clipboard()
         self.senha_gerada.setText(SenhaGerada)
+        Copiar.setText(SenhaGerada)
         return True
-        
 
-    def ChamaEncurtadorURL():
-        pass
+    @Sandbox
+    def ChamaEncurtadorURL(self, *args, **kwargs):
+        Url = str(self.lineEdit_url.text())
+        if Url.lower() == 'alegrete':
+            self.ExecutaEgg()
+            return False
+        UrlEncurtada = EncurtaUrl(Url)
+        Copiar = QApplication.clipboard()
+        Copiar.setText(UrlEncurtada)
+        Qrcode = CriaQRCODE(UrlEncurtada)
+        self.resultado_url.setHtml(UrlEncurtada)
+        self.qrcode.setPixmap(QPixmap(Qrcode))
+        self.qrcode.setScaledContents(True)
 
+    
+    @Sandbox
+    def AtualizaTitulosSenha(self, valor,slider):
+        if slider == 'senha':
+            self.label_tamanho_senha.setText('Tamanho da senha: '+ str(valor))
+        if slider == 'char':
+            self.label_char_especial.setText('Caracteres especiais: '+str(valor))
+
+    @Sandbox
     def ExecutaEgg(self):
-        print('djisji')
-        
+        Imagem = text2art("TOP","random")+'\n'+art('thanks')+'\n'+art('coffee now')
+        PopupEgg = QMessageBox()
+        PopupEgg.setIcon(QMessageBox.Question)
+        PopupEgg.setWindowTitle("404 "+art("bear"))
+        PopupEgg.setText("Ocorreu um erro na execução do programa!\nCaso precisse de ajuda, contate o suporte: 4002-8922")
+        PopupEgg.setDetailedText("Onde o Alegrete fica? Não sei, pode ser a cidade, ou o paraíso, enquanto pensa nisso, veja meu github e tome uma xícara de chá =D\nhttps://github.com/BrunoMaia/\n"+ Imagem)
+        PopupEgg.exec_()
+        self.resultado_ping_av.setText(Imagem)
+
+    
     def setupUi(self, MainWindow):
         MainWindow.setObjectName("MainWindow")
         MainWindow.resize(640, 480)
@@ -93,7 +128,7 @@ class InterfaceUsuario(object):
         self.label_host.setGeometry(QtCore.QRect(10, 20, 26, 13))
         self.label_host.setObjectName("label_host")
         self.label_resultado = QtWidgets.QLabel(self.ping_tab)
-        self.label_resultado.setGeometry(QtCore.QRect(10, 90, 150, 13))
+        self.label_resultado.setGeometry(QtCore.QRect(10, 90, 180, 16))
         self.label_resultado.setObjectName("label_resultado")
         self.resultado_ping_av = QtWidgets.QTextBrowser(self.ping_tab)
         self.resultado_ping_av.setGeometry(QtCore.QRect(20, 140, 581, 301))
@@ -111,7 +146,7 @@ class InterfaceUsuario(object):
         self.spinBox_ping.setMaximum(4)
         self.spinBox_ping.setObjectName("spinBox_ping")
         self.label_n_ping = QtWidgets.QLabel(self.ping_tab)
-        self.label_n_ping.setGeometry(QtCore.QRect(380, 20, 61, 16))
+        self.label_n_ping.setGeometry(QtCore.QRect(380, 20, 81, 16))
         self.label_n_ping.setObjectName("label_n_ping")
         self.tabWidget.addTab(self.ping_tab, "")
         self.senha_tab = QtWidgets.QWidget()
@@ -132,7 +167,7 @@ class InterfaceUsuario(object):
         self.qtd_chars_especial.setOrientation(QtCore.Qt.Horizontal)
         self.qtd_chars_especial.setObjectName("qtd_chars_especial")
         self.label_tamanho_senha = QtWidgets.QLabel(self.senha_tab)
-        self.label_tamanho_senha.setGeometry(QtCore.QRect(20, 20, 100, 13))
+        self.label_tamanho_senha.setGeometry(QtCore.QRect(20, 20, 150, 13))
         self.label_tamanho_senha.setObjectName("label_tamanho_senha")
         self.label_char_especial = QtWidgets.QLabel(self.senha_tab)
         self.label_char_especial.setGeometry(QtCore.QRect(290, 20, 200, 13))
@@ -141,10 +176,10 @@ class InterfaceUsuario(object):
         self.button_gerar_senha.setGeometry(QtCore.QRect(520, 30, 75, 23))
         self.button_gerar_senha.setObjectName("button_gerar_senha")
         self.senha_gerada = QtWidgets.QTextBrowser(self.senha_tab)
-        self.senha_gerada.setGeometry(QtCore.QRect(30, 110, 256, 41))
+        self.senha_gerada.setGeometry(QtCore.QRect(30, 110, 561, 41))
         self.senha_gerada.setObjectName("senha_gerada")
         self.label_senha_gerada = QtWidgets.QLabel(self.senha_tab)
-        self.label_senha_gerada.setGeometry(QtCore.QRect(20, 90, 70, 13))
+        self.label_senha_gerada.setGeometry(QtCore.QRect(20, 90, 91, 16))
         self.label_senha_gerada.setObjectName("label_senha_gerada")
         self.tabWidget.addTab(self.senha_tab, "")
         self.encurtar_tab = QtWidgets.QWidget()
@@ -155,11 +190,12 @@ class InterfaceUsuario(object):
         self.label_url = QtWidgets.QLabel(self.encurtar_tab)
         self.label_url.setGeometry(QtCore.QRect(10, 20, 47, 13))
         self.label_url.setObjectName("label_url")
-        self.qrcode = QtWidgets.QGraphicsView(self.encurtar_tab)
-        self.qrcode.setGeometry(QtCore.QRect(160, 220, 256, 192))
+        self.qrcode = QtWidgets.QLabel(self.encurtar_tab)
+        self.qrcode.setGeometry(QtCore.QRect(160, 190, 240, 240))
         self.qrcode.setObjectName("qrcode")
         self.resultado_url = QtWidgets.QTextEdit(self.encurtar_tab)
         self.resultado_url.setGeometry(QtCore.QRect(20, 100, 450, 30))
+        self.resultado_url.setReadOnly(True)
         self.resultado_url.setObjectName("resultado_url")
         self.button_encurtar = QtWidgets.QPushButton(self.encurtar_tab)
         self.button_encurtar.setGeometry(QtCore.QRect(510, 40, 75, 23))
@@ -168,7 +204,7 @@ class InterfaceUsuario(object):
         self.label_url_encurtada.setGeometry(QtCore.QRect(10, 80, 80, 13))
         self.label_url_encurtada.setObjectName("label_url_encurtada")
         self.label_qrcode = QtWidgets.QLabel(self.encurtar_tab)
-        self.label_qrcode.setGeometry(QtCore.QRect(250, 200, 60, 13))
+        self.label_qrcode.setGeometry(QtCore.QRect(250, 160, 60, 13))
         self.label_qrcode.setObjectName("label_qrcode")
         self.tabWidget.addTab(self.encurtar_tab, "")
         MainWindow.setCentralWidget(self.centralwidget)
@@ -179,6 +215,8 @@ class InterfaceUsuario(object):
         self.button_ping.clicked.connect(self.ExecutaPing)
         self.button_gerar_senha.clicked.connect(self.ChamaGeradorSenha)
         self.button_encurtar.clicked.connect(self.ChamaEncurtadorURL)
+        self.tamanho_senha.valueChanged.connect(lambda: self.AtualizaTitulosSenha(self.tamanho_senha.value(),slider='senha'))
+        self.qtd_chars_especial.valueChanged.connect(lambda: self.AtualizaTitulosSenha(self.qtd_chars_especial.value(),slider='char'))
 
         self.retranslateUi(MainWindow)
         self.tabWidget.setCurrentIndex(0)
@@ -199,8 +237,8 @@ class InterfaceUsuario(object):
         self.spinBox_ping.setToolTip(_translate("MainWindow", "<html><head/><body><p>É a quantidade de vezes que o ping é executado</p></body></html>"))
         self.label_n_ping.setText(_translate("MainWindow", "Quantidade"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.ping_tab), _translate("MainWindow", "Ping"))
-        self.label_tamanho_senha.setText(_translate("MainWindow", "Tamanho da senha"))
-        self.label_char_especial.setText(_translate("MainWindow", "Caracteres especiais e números"))
+        self.label_tamanho_senha.setText(_translate("MainWindow", "Tamanho da senha: 8"))
+        self.label_char_especial.setText(_translate("MainWindow", "Caracteres especiais e números: 0"))
         self.button_gerar_senha.setText(_translate("MainWindow", "Gerar!"))
         self.label_senha_gerada.setText(_translate("MainWindow", "Senha gerada"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.senha_tab), _translate("MainWindow", "Gerar senha"))
