@@ -15,16 +15,14 @@ public class Aula01 {
         System.out.println(localizarExtremos(valores_entrada));
     }
     static String localizarExtremos(int[] valores) {
-        int valor_menor = Integer.MIN_VALUE;
-        int valor_maior = Integer.MAX_VALUE;
-        for (int i=0; i < valores.length; i++) {
-            if (i == 0) {
-                valor_maior = valores[i];
-                valor_menor = valores[i];
-            } else if (valores[i] > valor_maior) {
-                valor_maior = valores[i];
-            } else if (valores[i] < valor_menor) {
-                valor_menor = valores[i];
+        int valor_menor = Integer.MAX_VALUE;
+        int valor_maior = Integer.MIN_VALUE;
+        for (int valor : valores) {
+            if (valor > valor_maior){
+                valor_maior = valor;
+            }
+            if (valor < valor_menor) {
+                valor_menor = valor;
             }
         }
         String mensagem = String.format("O valor maior é: %d, o valor menor é: %d",valor_maior,valor_menor);
