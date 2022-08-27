@@ -1,25 +1,22 @@
+package br.pucpr.rpg;
+
+import br.pucpr.rpg.system.Char;
+
 public class Battle {
     public static void main(String[] args) {
-        Char hero = new Char();
-        hero.name = "Sir Gallahad";
-        hero.skill = 14;
-        hero.life = 80;
-        hero.defense = 5;
+        Char hero = new Char("Sir Gallahad",14,80,5);
         Char monster = Char.createGoblin();
 
         // BATALHA ATE A MORTE
         // QUEREMOS SANGUE
-        System.out.printf("%s life: %d versus %s life: %d%n",hero.name, hero.life,monster.name,monster.life);
-        while (hero.life > 0 && monster.life > 0){
+        System.out.printf("%s life: %d versus %s life: %d%n",hero.getName(),
+                hero.getLife(),monster.getName(),monster.getLife());
+        while (hero.isAlive() && monster.isAlive()){
             hero.attack(monster);
             monster.attack(hero);
             System.out.println();
         }
-        if (hero.life > 0){
-            System.out.printf("%s wins! Life: %d", hero.name,hero.life);
-        }
-        else {
-            System.out.printf("%s wins! Life: %d", monster.name, monster.life);
+        Char winner = hero.isAlive() ? hero :monster;
+        System.out.printf("%s wins! Life: %d",winner.getName(),winner.getLife());
         }
     }
-}
