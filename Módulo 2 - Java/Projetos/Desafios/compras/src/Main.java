@@ -9,6 +9,10 @@ public class Main {
         do {
             logado = Cli.fazLogin();
         }while (logado != true);
-        Cli.exibeMenu();
+        int opcao = Cli.exibeMenu();
+        if (opcao == 4){
+            Cli.exibeSobre();
+            opcao = Cli.exibeMenu();
+        }
     }
 }

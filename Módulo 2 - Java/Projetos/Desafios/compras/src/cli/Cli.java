@@ -41,4 +41,12 @@ public class Cli {
         }
         return retorno;
     }
+
+    public static void exibeSobre(){
+        System.out.println("**********************************************************");
+        System.out.println("* Criado por: Bruno Maia                                  *");
+        System.out.println("* GitHub: github.com/BrunoMaia/PAFT                       *");
+        System.out.println("* Ano: 2022                                               *");
+        System.out.println("**********************************************************");
+    }
 }
