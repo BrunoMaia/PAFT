@@ -1,5 +1,6 @@
-package pucpr.contacorrente;
+package br.pucpr.contacorrente;
 
+import javax.swing.table.JTableHeader;
 import java.util.Objects;
 
 public class ContaCorrente {

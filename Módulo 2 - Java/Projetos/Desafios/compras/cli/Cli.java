@@ -1,4 +1,4 @@
-package compras.cli;
+package br.Desafios.compras.cli;
 
 public class Cli {
 }

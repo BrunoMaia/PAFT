@@ -1,6 +1,6 @@
-package pucpr.rpg.items;
+package br.pucpr.rpg.items;
 
-import pucpr.rpg.system.DiceRoll;
+import br.pucpr.rpg.system.DiceRoll;
 
 public class Weapon {
     public static final Weapon FISTS = new Weapon("Fists",new DiceRoll(0,1,1));

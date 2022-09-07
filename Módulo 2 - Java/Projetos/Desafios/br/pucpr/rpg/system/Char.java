@@ -1,7 +1,7 @@
-package pucpr.rpg.system;
+package br.pucpr.rpg.system;
 
-import pucpr.rpg.items.LifePotion;
-import pucpr.rpg.items.Weapon;
+import br.pucpr.rpg.items.LifePotion;
+import br.pucpr.rpg.items.Weapon;
 
 import java.util.Random;
 

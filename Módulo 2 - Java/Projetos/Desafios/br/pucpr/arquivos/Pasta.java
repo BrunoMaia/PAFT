@@ -1,4 +1,4 @@
-package pucpr.arquivos;
+package br.pucpr.arquivos;
 
 import java.util.ArrayList;
 import java.util.Iterator;

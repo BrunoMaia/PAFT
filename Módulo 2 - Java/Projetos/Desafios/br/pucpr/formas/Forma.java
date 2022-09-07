@@ -1,4 +1,4 @@
-package pucpr.formas;
+package br.pucpr.formas;
 
 public abstract class Forma {
     private String cor;

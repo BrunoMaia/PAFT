@@ -1,9 +1,9 @@
-package pucpr.rpg;
+package br.pucpr.rpg;
 
-import pucpr.rpg.items.LifePotion;
-import pucpr.rpg.items.Weapon;
-import pucpr.rpg.system.Char;
-import pucpr.rpg.system.DiceRoll;
+import br.pucpr.rpg.items.LifePotion;
+import br.pucpr.rpg.items.Weapon;
+import br.pucpr.rpg.system.Char;
+import br.pucpr.rpg.system.DiceRoll;
 
 public class Battle {
     public static void main(String[] args) {

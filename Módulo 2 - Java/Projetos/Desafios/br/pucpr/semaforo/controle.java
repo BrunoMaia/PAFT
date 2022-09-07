@@ -1,4 +1,4 @@
-package pucpr.semaforo;
+package br.pucpr.semaforo;
 
 import java.util.Scanner;
 
