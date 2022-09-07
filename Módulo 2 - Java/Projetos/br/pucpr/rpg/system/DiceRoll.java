@@ -1,4 +1,4 @@
-package br.pucpr.rpg.system;
+package pucpr.rpg.system;
 
 import java.util.Random;
 

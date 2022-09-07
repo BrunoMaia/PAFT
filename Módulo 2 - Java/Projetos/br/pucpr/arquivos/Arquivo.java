@@ -1,4 +1,4 @@
-package br.pucpr.arquivos;
+package pucpr.arquivos;
 public class Arquivo {
     private String nome;
     private String extencao;

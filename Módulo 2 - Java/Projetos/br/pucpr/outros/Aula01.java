@@ -1,3 +1,5 @@
+package pucpr.outros;
+
 import java.util.Arrays;
 import java.util.Scanner;
 

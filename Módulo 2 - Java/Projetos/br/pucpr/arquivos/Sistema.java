@@ -1,4 +1,4 @@
-package br.pucpr.arquivos;
+package pucpr.arquivos;
 
 public class Sistema {
     public static void main(String[] args) {

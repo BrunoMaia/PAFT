@@ -1,3 +1,5 @@
+package pucpr.outros;
+
 public class Relogio {
     String nome;
     int horas;

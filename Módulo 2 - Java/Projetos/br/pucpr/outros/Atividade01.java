@@ -1,3 +1,5 @@
+package pucpr.outros;
+
 import java.util.Scanner;
 
 public class Atividade01 {

@@ -1,4 +1,4 @@
-package br.pucpr.semaforo;
+package pucpr.semaforo;
 
 import java.util.Objects;
 

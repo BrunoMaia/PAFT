@@ -1,4 +1,4 @@
-package br.Desafios.compras.businessLogic;
+package compras.businessLogic;
 
 public class BusinessLogic {
 }

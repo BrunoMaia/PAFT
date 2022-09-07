@@ -1,6 +1,6 @@
-package br.pucpr.rpg.items;
+package pucpr.rpg.items;
 
-import br.pucpr.rpg.system.DiceRoll;
+import pucpr.rpg.system.DiceRoll;
 
 public class LifePotion {
     public static final int POTE_PADRAO = 10;
