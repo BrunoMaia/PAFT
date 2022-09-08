@@ -1,9 +1,13 @@
 package cli;
 
+import businessLogic.BusinessLogic;
+import businessLogic.Usuario;
+
 import java.util.Scanner;
 
 public class Cli {
     private static final Scanner SC = new Scanner(System.in);
+    private Usuario usuario_logado;
 
     public static void exibeBoasVindas(){
         System.out.println("**********************************************************");
@@ -13,13 +17,13 @@ public class Cli {
         System.out.println("**********************************************************");
     }
 
-    public static boolean fazLogin(){
+    public static Usuario fazLogin(){
         System.out.print("Digite seu CPF: ");
         String login = SC.nextLine();
         System.out.print("Digite sua senha: ");
         String senha = SC.nextLine();
-        if (login.equals("admin") && login.equals("admin")) return true;
-        else return false;
+        Usuario usuario = new BusinessLogic().logarUsuario(login,senha);
+        return usuario;
     }
 
     public static int exibeMenu(){
@@ -28,9 +32,10 @@ public class Cli {
         System.out.println("*                      Menu                              *");
         System.out.println("*                                                        *");
         System.out.println("*  [1] Comprar      [2] Relatorio   [3] Trocar usuario   *");
-        System.out.println("*  [4] Sobre        [5] Sair                             *");
+        System.out.println("*  [4] Estoque      [5] Sobre       [6] Sair             *");
         System.out.println("*                                                        *");
         System.out.println("**********************************************************");
+
         String opcao = SC.nextLine();
         if (opcao == null || opcao.isEmpty()) exibeMenu();
         try {
@@ -39,14 +44,19 @@ public class Cli {
             System.out.println("Opcao nao encontrada, digite novamente");
             exibeMenu();
         }
+
+        if (retorno > 6 || retorno < 1){
+            System.out.println("Opcao nao encontrada, digite novamente");
+            exibeMenu();
+        }
         return retorno;
     }
 
     public static void exibeSobre(){
         System.out.println("**********************************************************");
-        System.out.println("* Criado por: Bruno Maia                                  *");
-        System.out.println("* GitHub: github.com/BrunoMaia/PAFT                       *");
-        System.out.println("* Ano: 2022                                               *");
+        System.out.println("* Criado por: Bruno Maia                                 *");
+        System.out.println("* GitHub: github.com/BrunoMaia/PAFT                      *");
+        System.out.println("* Ano: 2022                                              *");
         System.out.println("**********************************************************");
     }
 }

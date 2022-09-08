@@ -1,16 +1,17 @@
+import businessLogic.Usuario;
 import cli.Cli;
 
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        boolean logado = false;
+        Usuario usuario_logado = null;
         Cli.exibeBoasVindas();
         do {
-            logado = Cli.fazLogin();
-        }while (logado != true);
+            usuario_logado = Cli.fazLogin();
+        }while (usuario_logado == null);
         int opcao = Cli.exibeMenu();
-        if (opcao == 4){
+        if (opcao == 5){
             Cli.exibeSobre();
             opcao = Cli.exibeMenu();
         }
