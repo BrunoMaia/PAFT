@@ -26,13 +26,13 @@ public class Cli {
         String login = SC.nextLine();
         System.out.print("Digite sua senha: ");
         String senha = SC.nextLine();
-        Usuario usuario = new BusinessLogic().logarUsuario(login,senha);
-        return usuario;
+        return new BusinessLogic().logarUsuario(login,senha);
     }
 
     private int leOpcao(){
         int retorno = 0;
-        String opcao = SC.nextLine();
+        String opcao = "";
+        opcao = SC.nextLine();
         if (opcao == null || opcao.isEmpty()) exibeMenu(usuarioLogado.isAdmin());
         try {
             retorno = Integer.parseInt(opcao);
@@ -49,16 +49,22 @@ public class Cli {
 
     private int exibeMenu(boolean admin){
         int retorno = 0;
-        String menu = "**********************************************************\n" +
-                "*                      Menu                              *\n" +
-                "*                                                        *\n";
+        String menu = """
+                **********************************************************
+                *                      Menu                              *
+                *                                                        *
+                """;
         if (admin){
-            menu += "*  [1] Compras      [2] Relatorio   [3] Trocar usuario   *\n" +
-                    "*  [4] Estoque      [5] Sobre       [6] Sair             *\n" ;
+            menu += """
+                    *  [1] Compras      [2] Relatorio   [3] Trocar usuario   *
+                    *  [4] Estoque      [5] Sobre       [6] Sair             *
+                    """;
         }
         else {
-            menu += "*  [1] Comprar      [3] Trocar usuario   [5] Sobre       *\n" +
-                    "*  [6] Sair                                              *\n" ;
+            menu += """
+                    *  [1] Comprar      [3] Trocar usuario   [5] Sobre       *
+                    *  [6] Sair                                              *
+                    """;
         }
         menu += "*                                                        *\n" +
                 "**********************************************************";
@@ -112,12 +118,12 @@ public class Cli {
                 if (SC.nextLine().contains("s")){
                     BL.finalizarCompra(usuarioLogado);
                 }
+                break;
             case 5:
                 exibeMenu(usuarioLogado.isAdmin());
+                break;
 
         }
-        exibeCompras();
-
     }
 
     private void exibeAdicionarAoCarrinho(){
@@ -143,10 +149,16 @@ public class Cli {
     }
 
     private void exibeRelatorio(){
+        System.out.println("******************** Relatorio de compras ***********************");
+        System.out.printf("%-20s | Qtd. Compras | Vlr. Tot | Vlr. Medio%n","Nome cliente");
+        System.out.println("-----------------------------------------------------------------");
+        System.out.println(BL.relatorioCompras());
 
     }
 
     private void exibeTrocarUsuario(){
+        usuarioLogado = null;
+        executarCli();
 
     }
 
@@ -180,24 +192,12 @@ public class Cli {
         while (true) {
             int retorno = exibeMenu(usuarioLogado.isAdmin());
             switch (retorno) {
-                case 1:
-                    exibeCompras();
-                    break;
-                case 2:
-                    exibeRelatorio();
-                    break;
-                case 3:
-                    exibeTrocarUsuario();
-                    break;
-                case 4:
-                    exibeEstoque();
-                    break;
-                case 5:
-                    exibeSobre();
-                    break;
-                case 6:
-                    System.exit(0);
-                    break;
+                case 1 -> exibeCompras();
+                case 2 -> exibeRelatorio();
+                case 3 -> exibeTrocarUsuario();
+                case 4 -> exibeEstoque();
+                case 5 -> exibeSobre();
+                case 6 -> System.exit(0);
             }
         }
 

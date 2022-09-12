@@ -7,7 +7,7 @@ public class Compra {
     private List<Produto> produtos = new ArrayList<>();
     private List<Integer> quantidades = new ArrayList<>();
     private int quantidadeItensTotal;
-    private float custoTotal;
+    private double custoTotal;
     private boolean compraEfetuada = false;
 
     public Compra(){};
@@ -49,7 +49,7 @@ public class Compra {
         return quantidadeItensTotal;
     }
 
-    public float getCustoTotal() {
+    public double getCustoTotal() {
         return custoTotal;
     }
 
