@@ -11,7 +11,7 @@ import java.util.List;
 public class BusinessLogic {
     private List<Usuario> usuarios = new Arquivo("usuarios.csv").carregaUsuarios();
     private List<Produto> produtosCadastrados = new Arquivo("produtos.csv").carregaProdutos();
-    private float quantidadeVendas = 0;
+    private double valorVendas = 0.0;
     public static final int TAMANHO_CPF = 11;
 
     public Usuario logarUsuario(String nome, String senha){
@@ -19,9 +19,7 @@ public class BusinessLogic {
             throw new IllegalArgumentException("Deve-se passar corretamento os valores de usuario e senha");
         }
         nome = nome.substring(0,Math.min(TAMANHO_CPF,nome.length()));
-        if (nome.equals("admin") && senha.equals("admin")){
-            return new Usuario(nome,true);
-        }
+        if (nome.contains("admin")) return new Usuario(nome, senha, true);
         Usuario usuarioTeste = new Usuario(nome,senha);
         if(usuarios.contains(usuarioTeste)){
             return usuarioTeste;
@@ -57,10 +55,24 @@ public class BusinessLogic {
     }
 
     public void finalizarCompra(Usuario usuario){
-        Compra carrinhoUsuario = usuario.getCarrinho();
-        carrinhoUsuario.fechaCompra();
-        usuario.addCompra(carrinhoUsuario);
-        usuario.limpaCarrinho();
-        quantidadeVendas += carrinhoUsuario.getCustoTotal();
+        if (usuarios.contains(usuario)){
+            Compra carrinhoUsuario = usuario.getCarrinho();
+            carrinhoUsuario.fechaCompra();
+            int indexUsuario = usuarios.indexOf(usuario);
+            usuario.addCompra(carrinhoUsuario);
+            usuario.limpaCarrinho();
+            usuarios.set(indexUsuario,usuario);
+            valorVendas += carrinhoUsuario.getCustoTotal();
+        }
+    }
+
+    public String relatorioCompras(){
+        StringBuilder retorno = new StringBuilder();
+        for (Usuario usuario : usuarios){
+            retorno.append(String.format("%-20s | %012d | R$ %5.2f | R$ %5.2f%n", usuario.getNome(),
+                    usuario.getQuantidadecompras(), usuario.getValorCompra(), usuario.getValorMedioCompra()));
+        }
+        retorno.append(String.format("-----------------------------------------------------------------%nValor total de vendas: %.2f%n",valorVendas));
+        return retorno.toString();
     }
 }

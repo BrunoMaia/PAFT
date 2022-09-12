@@ -10,20 +10,38 @@ public class Usuario {
     private boolean admin;
     private String cpf;
     private String senha;
+    private String nome;
     private List<Compra> compras = new ArrayList<>();
     private Compra carrinho = new Compra();
+    private int itensComprados;
+    private double valorCompra;
+    private double valorMedioCompra;
 
-    public Usuario(String cpf, String senha) {
+    public Usuario(String cpf, String senha, String nome, boolean admin){
+        if (cpf == null || cpf.isEmpty() || senha == null || senha.isEmpty() || nome == null || nome.isEmpty()){
+            throw new IllegalArgumentException("Voce deve passar corretamente os argumentos!");
+        }
         this.cpf = cpf;
         this.senha = senha;
+        this.nome = nome;
+        this.admin = admin;
+
     }
 
-    public Usuario(String cpf, boolean admin){
-        if (admin){
-            this.cpf = cpf;
-            this.senha = "admin";
-            this.admin = true;
-        }
+    public Usuario(String cpf, String senha, String nome){
+        this(cpf,senha,nome,false);
+    }
+    public Usuario(String cpf, String senha) {
+        this(cpf,senha,"John Snow");
+    }
+
+    public Usuario(String cpf, String senha, boolean admin){
+        this(cpf,senha, "Administrador", true);
+
+    }
+
+    public int getQuantidadecompras(){
+        return compras.size();
     }
 
     public boolean isAdmin() {
@@ -32,6 +50,22 @@ public class Usuario {
 
     public String getCpf() {
         return cpf;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public int getItensComprados() {
+        return itensComprados;
+    }
+
+    public double getValorCompra() {
+        return valorCompra;
+    }
+
+    public double getValorMedioCompra() {
+        return valorMedioCompra;
     }
 
     @Override
@@ -62,6 +96,9 @@ public class Usuario {
     }
 
     public void addCompra(Compra compra){
+        valorCompra += compra.getCustoTotal();
+        itensComprados += compra.getQuantidadeItensTotal();
+        valorMedioCompra = valorCompra / itensComprados;
         compras.add(compra);
     }
 
