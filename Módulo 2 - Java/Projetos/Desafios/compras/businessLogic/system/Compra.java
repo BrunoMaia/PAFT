@@ -68,4 +68,8 @@ public class Compra {
         }
         return retorno.toString();
     }
+
+    public boolean contemProduto(Produto produto){
+        return produtos.contains(produto);
+    }
 }
