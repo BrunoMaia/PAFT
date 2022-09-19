@@ -1,13 +1,14 @@
 package br.pucpr.rpg.items;
 
 import br.pucpr.rpg.system.DiceRoll;
+import br.pucpr.rpg.system.Rollable;
 
 public class Weapon {
     public static final Weapon FISTS = new Weapon("Fists",new DiceRoll(0,1,1));
     private String name;
-    private DiceRoll damage;
+    private Rollable damage;
 
-    public Weapon(String name, DiceRoll damage) {
+    public Weapon(String name, Rollable damage) {
         if (damage == null){
             throw new IllegalArgumentException("Damage cannot be null!!");
         }
@@ -22,7 +23,7 @@ public class Weapon {
         return name;
     }
 
-    public DiceRoll getDamage() {
+    public Rollable getDamage() {
         return damage;
     }
 

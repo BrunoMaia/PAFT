@@ -2,7 +2,7 @@ package br.pucpr.rpg.system;
 
 import java.util.Random;
 
-public class DiceRoll {
+public class DiceRoll implements Rollable {
     private static final Random RND = new Random();
     private int dices;
     private int faces;

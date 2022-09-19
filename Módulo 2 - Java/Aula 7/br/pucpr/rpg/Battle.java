@@ -4,11 +4,12 @@ import br.pucpr.rpg.items.LifePotion;
 import br.pucpr.rpg.items.Weapon;
 import br.pucpr.rpg.system.Char;
 import br.pucpr.rpg.system.DiceRoll;
+import br.pucpr.rpg.system.FixedRoll;
 
 public class Battle {
     public static void main(String[] args) {
         Char hero = new Char("Sir Gallahad",14,80,5);
-        hero.setWeapon(new Weapon("Excalibur", new DiceRoll(1,6,2)));
+        hero.setWeapon(new Weapon("Excalibur", new FixedRoll(5,6,7)));
         Char monster = Char.createGoblin();
         monster.setLifePotion(new LifePotion());
 
