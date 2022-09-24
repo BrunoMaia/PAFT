@@ -16,7 +16,7 @@ public class Cli {
     private void exibeBoasVindas(){
         System.out.println("**********************************************************");
         System.out.println("*                                                        *");
-        System.out.println("*                BEM VINDO A LOJA!                       *");
+        System.out.println("*                BEM VINDO A TABERNA!                    *");
         System.out.println("*                                                        *");
         System.out.println("**********************************************************");
     }
