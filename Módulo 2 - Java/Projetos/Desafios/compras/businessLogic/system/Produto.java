@@ -19,6 +19,10 @@ public class Produto {
         this(codigo,nome,0,0);
     }
 
+    public Produto(int codigo) {
+        this(codigo,"SEM NOME");
+    }
+
     public int getCodigo() {
         return codigo;
     }
@@ -58,5 +62,17 @@ public class Produto {
     @Override
     public int hashCode() {
         return Objects.hash(codigo);
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public void setPreco(double preco) {
+        this.preco = preco;
+    }
+
+    public void setEstoque(int estoque) {
+        this.estoque = estoque;
     }
 }
