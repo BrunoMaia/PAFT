@@ -24,16 +24,17 @@ while(alturaChico > alturaZe){
 // Exercício lista
 function HelperLista(lista){
     let somaValores = 0;
+    let positivos = [];
     for(const objeto of lista){
-        console.log(objeto);
-        if(!isNaN(objeto)){
-            somaValores += objeto;
+        soma += valor;
+        if (valor > 0) {
+            positivos.push(valor);
         }
     }
     console.log("A média dos valores é: ",(somaValores/lista.length).toFixed(2));
 }
 
-HelperLista([1,2,3,4,5,6,7,"8",9]);
+HelperLista([1, 10, -100, 50, 20, 40]);
 
 // Exercicio pessoas
 let cores = ["branco","negro","pardo","outro"];
