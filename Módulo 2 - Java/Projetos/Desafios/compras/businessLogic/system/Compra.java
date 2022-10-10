@@ -1,30 +1,33 @@
 package businessLogic.system;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Compra {
-    private List<Produto> produtos = new ArrayList<>();
-    private List<Integer> quantidades = new ArrayList<>();
+public class Compra implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 7125719644116935061L;
+    private final List<Produto> produtos = new ArrayList<>();
+    private final List<Integer> quantidades = new ArrayList<>();
     private int quantidadeItensTotal;
     private double custoTotal;
     private boolean compraEfetuada = false;
 
-    public Compra(){};
+    public Compra(){}
 
-    public boolean adcionaProduto(Produto produto, int quantidade){
+    public void adcionaProduto(Produto produto, int quantidade){
         if (compraEfetuada){
-            return false;
+            System.out.println("Compra fechada");
         }else {
             if (quantidade > produto.getEstoque()){
-                return false;
+                System.out.println("Quantidade maior que o estoque");
             }
             produtos.add(produto);
             quantidades.add(quantidade);
             quantidadeItensTotal += quantidade;
             custoTotal += (produto.getPreco() * quantidade);
             produto.modificaEstoque(quantidade,true);
-            return true;
         }
     }
 
@@ -69,7 +72,7 @@ public class Compra {
         return retorno.toString();
     }
 
-    public boolean contemProduto(Produto produto){
-        return produtos.contains(produto);
+    public boolean contemProduto(int codigoProduto){
+        return produtos.contains(codigoProduto);
     }
 }

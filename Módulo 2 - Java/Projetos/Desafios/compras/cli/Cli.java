@@ -1,24 +1,31 @@
 package cli;
 
 import businessLogic.BusinessLogic;
-import businessLogic.system.Compra;
-import businessLogic.system.Produto;
-import businessLogic.system.Usuario;
+import businessLogic.system.*;
 
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Cli {
     private Usuario usuarioLogado;
     private static final BusinessLogic BL = new BusinessLogic();
     private static final Scanner SC = new Scanner(System.in);
+    private final String separador;
+    private final int tamanhoCLI;
+
+    public Cli(int tamanho, char separador){
+        this.separador = String.valueOf(separador);
+        this.tamanhoCLI = Math.max(tamanho,25);
+    }
+
+    public Cli(){
+        this(60,'*');
+    }
 
     private void exibeBoasVindas(){
-        System.out.println("**********************************************************");
-        System.out.println("*                                                        *");
-        System.out.println("*                BEM VINDO A TABERNA!                    *");
-        System.out.println("*                                                        *");
-        System.out.println("**********************************************************");
+        String titulo = "|" + " ".repeat((tamanhoCLI-22)/2)+"BEM VINDO A TABERNA!"+ " ".repeat((tamanhoCLI-22)/2)+"|";
+    String espacador = "|" + " ".repeat(tamanhoCLI-2) + "|";
+        String retorno = String.format("%s%n%s%n%s%n%s%n%s%n",separador.repeat(tamanhoCLI),espacador,titulo,espacador,separador.repeat(tamanhoCLI));
+        System.out.print(retorno);
     }
 
     private Usuario fazLogin(){
@@ -31,17 +38,9 @@ public class Cli {
             System.out.print("Usuario nao cadastrado, deseja cadastrar (s/n)? ");
             boolean cadastrar = leString().contains("s");
             if (cadastrar){
-                System.out.print("Digite o cpf do novo usuario: ");
-                String cpfNovoUsuario = leString();
-                if (cpfNovoUsuario.contains("admin")){
-                    System.out.println("Usuario invalido");
-                    return null;
-                }
-                System.out.print("Digite a senha do novo usuario: ");
-                String senhaNovoUsuario = leString();
                 System.out.print("Digite o nome do novo usuario: ");
                 String nomeNovoUsuario = leString();
-                return BL.cadastrarUsuario(cpfNovoUsuario,senhaNovoUsuario,nomeNovoUsuario);
+                return BL.cadastrarUsuario(login,senha,nomeNovoUsuario);
             }
         }
         return usuario;
@@ -50,9 +49,11 @@ public class Cli {
     private int leOpcao(int maximo){
         int retorno = 0;
         String opcao = "";
+        System.out.print("\nDigite a opcao: ");
         opcao = SC.nextLine();
         if (opcao == null || opcao.isEmpty()) exibeMenu(usuarioLogado.isAdmin());
         try {
+            assert opcao != null;
             retorno = Integer.parseInt(opcao);
         }catch (NumberFormatException erro){
             System.out.println("Opcao nao encontrada, digite novamente");
@@ -96,28 +97,33 @@ public class Cli {
         return retorno;
     }
 
+    private String geraMenu(String titulo, String opcoes){
+        return String.format("""
+                %n%s
+                    
+                %s
+                
+                %s
+                """,geraCabecalho(titulo),opcoes,separador.repeat(tamanhoCLI));
+    }
+
+    private String geraCabecalho(String titulo){
+        int tamanhoEspador = (tamanhoCLI - titulo.length()-2)/2;
+        return String.format("%s %s %s",separador.repeat(tamanhoEspador),titulo,separador.repeat(tamanhoEspador));
+    }
     private int exibeMenu(boolean admin){
-        int retorno = 0;
-        String menu = """
-                **********************************************************
-                *                      Menu                              *
-                *                                                        *
-                """;
+        String menu;
         if (admin){
-            menu += """
-                    *  [1] Compras      [2] Relatorio   [3] Trocar usuario   *
-                    *  [4] Estoque      [5] Sobre       [6] Sair             *
-                    """;
+            menu = geraMenu("Menu", """
+                    [1] Compras      [2] Relatorio   [3] Trocar usuario
+                    [4] Estoque      [5] Sobre       [6] Sair""");
         }
         else {
-            menu += """
-                    *  [1] Comprar      [3] Trocar usuario   [5] Sobre       *
-                    *  [6] Sair                                              *
-                    """;
+            menu = geraMenu("Menu", """
+                    [1] Comprar      [3] Trocar usuario   [5] Sobre
+                    [6] Sair""");
         }
-        menu += "*                                                        *\n" +
-                "**********************************************************";
-        System.out.println(menu);
+        System.out.print(menu);
 
         int opcao = leOpcao(6);
 
@@ -129,37 +135,34 @@ public class Cli {
     }
 
     private void exibeSobre(){
-        System.out.println("**********************************************************");
-        System.out.println("* Criado por: Bruno Maia                                 *");
-        System.out.println("* GitHub: github.com/BrunoMaia/PAFT                      *");
-        System.out.println("* Ano: 2022                                              *");
-        System.out.println("**********************************************************");
+        System.out.println(geraMenu("Sobre", """
+                Criado por: Bruno Maia
+                GitHub: github.com/BrunoMaia/PAFT
+                Ano: 2022
+                V2.0"""));
     }
 
     private void exibeCompras(){
-        System.out.println("""
-                *********************************************************************
-                * [1] Buscar produto [2] Listar produtos  [3] Adicionar ao carrinho *
-                * [4] Exibir carrinho                     [5] Voltar ao menu        *
-                *********************************************************************
-                """);
+        System.out.print(geraMenu("Menu de compra","""
+                [1] Buscar produto [2] Listar produtos  [3] Adicionar ao carrinho
+                [4] Exibir carrinho                     [5] Voltar ao menu"""));
         int opcao = leOpcao(5);
         switch (opcao) {
             case 1 -> exibeBuscaProduto();
             case 2 -> {
-                System.out.println("***************** Produtos cadastrados **************************");
-                for (Produto produto : BL.getProdutos()) {
-                    if (produto.getEstoque() > 0) {
-                        System.out.printf("* |%06d| %-25s Estoque: %03d Preco: R$%.2f *%n", produto.getCodigo(),
-                                produto.getNome(), produto.getEstoque(), produto.getPreco());
+                StringBuilder relatorio = new StringBuilder();
+                for (Map.Entry<Integer,Produto> entrada: BL.getProdutos().entrySet()) {
+                    Produto produto = entrada.getValue();
+                    if (entrada.getValue().getEstoque() > 0) {
+                        relatorio.append(String.format("|%06d| %-25s Estoque: %03d Preco: R$%.2f%n", entrada.getKey(),
+                                produto.getNome(), produto.getEstoque(), produto.getPreco()));
                     }
                 }
-                System.out.println("*****************************************************************");
+                System.out.println(geraMenu("Lista de produtos ",relatorio.toString()));
             }
             case 3 -> exibeAdicionarAoCarrinho();
             case 4 -> {
-                System.out.println("***************** Carrinho de compras ***************************");
-                System.out.println(usuarioLogado.imprimeCarrinho());
+                System.out.println(geraMenu("Carrinho de compras ",usuarioLogado.imprimeCarrinho()));
                 System.out.printf("Valor total do carrinho: R$ %.2f%n", usuarioLogado.getValorCarrinho());
                 System.out.print("Deseja finalizar a compra s/n: ");
                 if (SC.nextLine().contains("s")) {
@@ -171,14 +174,14 @@ public class Cli {
     }
 
     private void exibeAdicionarAoCarrinho(){
-        System.out.println("******************** Adicionar ao carrinho **********************");
-        int item = -1;
-        int quantidade = -1;
+        System.out.println(geraCabecalho("Adicionar ao carrinho"));
+        int item = 0;
+        int quantidade = 0;
         try {
             System.out.print("Digite qual o codigo do item: ");
-            item = Integer.parseInt(SC.nextLine());
+            item = Math.max(Integer.parseInt(SC.nextLine()),0);
             System.out.print("Digite quantos itens deseja adicionar: ");
-            quantidade = Integer.parseInt(SC.nextLine());
+            quantidade = Math.max(Integer.parseInt(SC.nextLine()),0);
         }catch (NumberFormatException erro){
             System.out.println("Voce digitou dados que nao sao validos, tente novamente");
             exibeAdicionarAoCarrinho();
@@ -193,11 +196,11 @@ public class Cli {
     }
 
     private void exibeRelatorio(){
-        System.out.println("******************** Relatorio de compras ***********************");
-        System.out.printf("%-20s | Qtd. Compras | Vlr. Tot | Vlr. Medio%n","Nome cliente");
-        System.out.println("-----------------------------------------------------------------");
-        System.out.println(BL.relatorioCompras());
-
+        System.out.println(geraMenu("Relatorio de compras", String.format("""
+                        Nome cliente         | Qtd. Compras | Vlr. Tot | Vlr. Medio
+                        
+                        %s
+                        """,BL.relatorioCompras())));
     }
 
     private void exibeTrocarUsuario(){
@@ -207,19 +210,17 @@ public class Cli {
     }
 
     private void exibeEstoque(){
-        System.out.println("""
-                ******************* Gestao de estoque ***************************
-                * [1] Adicionar produto [2] Remover produto [3] Alterar produto *
-                * [4] Listar todos os produtos                                  *
-                *****************************************************************
-                """);
+        System.out.println(geraMenu("Menu de estoque","""
+                [1] Adicionar produto [2] Remover produto [3] Alterar produto
+                [4] Listar todos os produtos"""));
         int opcao = leOpcao(4);
         switch (opcao){
             case 1 -> adicionaProduto();
             case 2 -> removeProduto();
             case 3 -> alteraProduto();
-            case 4 ->{for (Produto produto : BL.buscarProduto("",false)) {
-                System.out.printf("* |%06d| %-25s Estoque: %03d Preco: R$%.2f *%n", produto.getCodigo(),
+            case 4 ->{for (Map.Entry<Integer,Produto> entrada : BL.buscarProduto(false).entrySet()) {
+                Produto produto = entrada.getValue();
+                System.out.printf("|%06d| %-25s Estoque: %03d Preco: R$%.2f%n", entrada.getKey(),
                         produto.getNome(), produto.getEstoque(), produto.getPreco());
                 }
             }
@@ -227,16 +228,17 @@ public class Cli {
     }
 
     private void adicionaProduto() {
-        System.out.println("******************* Gestao de estoque ***************************");
-        System.out.print("* Digite o codigo do produto a ser adicionado: ");
+        System.out.println(geraCabecalho("Adicionar produto "));
+        System.out.print("Digite o codigo do produto a ser adicionado: ");
         int codigo = leInt();
-        System.out.print("* Digite o nome do produto: ");
+        System.out.print("Digite o nome do produto: ");
         String nomeProduto = leString();
         if(BL.adicionaProduto(codigo, nomeProduto)){
-            System.out.println("Produto adicionado!\n*********************************");
-            for (Produto produto : BL.buscarProduto("",false)){
-                System.out.printf("* |%06d| %-25s Estoque: %03d Preco: R$%.2f *%n",produto.getCodigo(),
-                        produto.getNome(),produto.getEstoque(),produto.getPreco());
+            System.out.println("Produto adicionado!");
+            for (Map.Entry<Integer,Produto> entrada : BL.buscarProduto(false).entrySet()) {
+                Produto produto = entrada.getValue();
+                System.out.printf("|%06d| %-25s Estoque: %03d Preco: R$%.2f%n", entrada.getKey(),
+                        produto.getNome(), produto.getEstoque(), produto.getPreco());
             }
         }else {
             System.out.println("Houve um erro, tente novamente, o codigo ja existe?");
@@ -245,8 +247,8 @@ public class Cli {
     }
 
     private void removeProduto() {
-        System.out.println("******************* Gestao de estoque ***************************");
-        System.out.print("* Digite o codigo do produto a ser REMOVIDO: ");
+        System.out.println(geraCabecalho("Remover produto "));
+        System.out.print("Digite o codigo do produto a ser REMOVIDO: ");
         int codigo = leInt();
         if(BL.removeProduto(codigo)){
             System.out.println("Produto removido!");
@@ -257,11 +259,7 @@ public class Cli {
     }
 
     private void alteraProduto() {
-        System.out.println("""
-                ******************* Gestao de estoque ***************************
-                * [1] Alterar nome [2] Alterar preco [3] Alterar quantidade     *
-                *****************************************************************
-                """);
+        System.out.println(geraMenu("Alterar produto ","[1] Alterar nome [2] Alterar preco [3] Alterar quantidade"));
         int opcao = leOpcao(3);
         System.out.print("Digite o codigo do produto: ");
         int codigo = leInt();
@@ -286,14 +284,15 @@ public class Cli {
     }
 
     private void exibeBuscaProduto(){
-        System.out.println("********************** Busca de produto *************************");
+        System.out.println(geraCabecalho("Busca de produto"));
         System.out.print("Digite o nome do produto: ");
-        List<Produto> produtosLocalizados = BL.buscarProduto(SC.nextLine(),true);
+        Map<Integer,Produto> produtosLocalizados = BL.buscarProduto(SC.nextLine(),true);
         if (!produtosLocalizados.isEmpty()){
             System.out.println("Foram encontrados os seguintes produtos: ");
-            for (Produto produto : produtosLocalizados){
-                System.out.printf("* |%06d| %-25s Estoque: %03d Preco: R$%.2f *%n",produto.getCodigo(),
-                        produto.getNome(),produto.getEstoque(),produto.getPreco());
+            for (Map.Entry<Integer,Produto> entrada : produtosLocalizados.entrySet()) {
+                Produto produto = entrada.getValue();
+                System.out.printf("|%06d| %-25s Estoque: %03d Preco: R$%.2f%n", entrada.getKey(),
+                        produto.getNome(), produto.getEstoque(), produto.getPreco());
             }
         }else{
             System.out.println("Nao foram encontrados produtos =[");
@@ -304,22 +303,30 @@ public class Cli {
 
 
     public void executarCli(){
-        exibeBoasVindas();
-        do {
-            usuarioLogado = fazLogin();
-        }while (usuarioLogado == null);
-        while (true) {
-            int retorno = exibeMenu(usuarioLogado.isAdmin());
-            switch (retorno) {
-                case 1 -> exibeCompras();
-                case 2 -> exibeRelatorio();
-                case 3 -> exibeTrocarUsuario();
-                case 4 -> exibeEstoque();
-                case 5 -> exibeSobre();
-                case 6 -> System.exit(0);
+        try {
+            exibeBoasVindas();
+            do {
+                usuarioLogado = fazLogin();
+            } while (usuarioLogado == null);
+            while (true) {
+                int retorno = exibeMenu(usuarioLogado.isAdmin());
+                switch (retorno) {
+                    case 1 -> exibeCompras();
+                    case 2 -> exibeRelatorio();
+                    case 3 -> exibeTrocarUsuario();
+                    case 4 -> exibeEstoque();
+                    case 5 -> exibeSobre();
+                    case 6 -> {
+                        BL.salvarDados();
+                        System.exit(0);
+                    }
+                }
             }
+        } catch (Exception e) {
+            System.out.printf("Ocorreu um erro na execucao da CLI:%n%s%n%s",e.toString(),Arrays.toString(e.getStackTrace()));
+            BL.salvarDados();
+            System.exit(1);
         }
-
 
     }
 }
