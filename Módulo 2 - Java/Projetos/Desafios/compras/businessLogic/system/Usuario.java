@@ -2,11 +2,16 @@ package businessLogic.system;
 
 import businessLogic.system.Produto;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
-public class Usuario {
+public class Usuario implements Serializable, Comparable<Usuario> {
+    @Serial
+    private static final long serialVersionUID = 7125719644116935059L;
     private boolean admin;
     private String cpf;
     private String senha;
@@ -102,8 +107,14 @@ public class Usuario {
         compras.add(compra);
     }
 
+
+
     public void limpaCarrinho(){
         carrinho = new Compra();
     }
 
+    @Override
+    public int compareTo(Usuario usuario) {
+        return (int) (valorCompra - usuario.getValorCompra());
+    }
 }

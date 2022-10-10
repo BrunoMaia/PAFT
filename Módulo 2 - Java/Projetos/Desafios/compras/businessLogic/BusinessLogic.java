@@ -1,17 +1,16 @@
 package businessLogic;
 
-import businessLogic.system.Arquivo;
-import businessLogic.system.Compra;
-import businessLogic.system.Produto;
-import businessLogic.system.Usuario;
+import businessLogic.system.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class BusinessLogic {
-    private List<Usuario> usuarios = new Arquivo().carregaUsuarios("usuarios.csv");
-    private List<Produto> produtosCadastrados = new Arquivo().carregaProdutos("produtos.csv");
-    private double valorVendas = 0.0;
+    private static final Arquivo DADOS = new DadosPersistentes();
+    private static final String CAMINHO = System.getProperty("user.dir")+"/";
+    private final Set<Usuario> usuarios = new HashSet<>(DADOS.carregaUsuarios(CAMINHO+"usuarios.data"));
+    private final Map<Integer,Produto> produtosCadastrados= new HashMap<>(DADOS.carregaProdutos(CAMINHO+"produtos.data"));
+    private double valorVendas = DADOS.carregaValorVenda(CAMINHO+"valorVenda.data");
     public static final int TAMANHO_CPF = 11;
 
     public Usuario logarUsuario(String nome, String senha){
@@ -27,40 +26,32 @@ public class BusinessLogic {
         return null;
     }
 
-    public List<Produto> buscarProduto(String nomeProduto, boolean soComEstoque){
-        List<Produto> resultado = new ArrayList<>();
-        // TODO: pensar em uma expressao que remova o if
-        if (soComEstoque){
-            for (Produto produto : produtosCadastrados){
-                if (produto.getNome().contains(nomeProduto) && produto.getEstoque() > 0){
-                    resultado.add(produto);
-                }
-            }
-        }else {
-            for (Produto produto : produtosCadastrados){
-                if (produto.getNome().contains(nomeProduto)){
-                    resultado.add(produto);
-                }
-            }
+    public  Map<Integer,Produto> buscarProduto(String nomeProduto, boolean soComEstoque){
+        if (soComEstoque) {
+            return new HashMap<>(produtosCadastrados.entrySet().stream()
+                    .filter(a -> a.getValue().getEstoque() > 0)
+                    .filter(a -> a.getValue().getNome().contains(nomeProduto))
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue))
+            );
         }
-
-        return resultado;
+        return new HashMap<>(produtosCadastrados);
     }
 
-    public List<Produto> getProdutos(){
-        return produtosCadastrados;
+    public Map<Integer,Produto> buscarProduto(boolean soComEstoque){
+        return buscarProduto("",soComEstoque);
+    }
+
+    public Map<Integer,Produto> getProdutos(){
+        return new HashMap<>(produtosCadastrados);
     }
 
     public boolean adicionarAoCarrinho(int item, int quantidade, Usuario usuario){
-        Produto teste = new Produto(item, "Teste");
-        if (produtosCadastrados.contains(teste)){
-            int i = produtosCadastrados.indexOf(teste);
-            teste = produtosCadastrados.get(i);
+        Produto teste = produtosCadastrados.get(item);
+        if (teste != null){
             Compra carrinho = usuario.getCarrinho();
             carrinho.adcionaProduto(teste,quantidade);
             return true;
         }
-
         return false;
     }
 
@@ -68,17 +59,18 @@ public class BusinessLogic {
         if (usuarios.contains(usuario)){
             Compra carrinhoUsuario = usuario.getCarrinho();
             carrinhoUsuario.fechaCompra();
-            int indexUsuario = usuarios.indexOf(usuario);
             usuario.addCompra(carrinhoUsuario);
             usuario.limpaCarrinho();
-            usuarios.set(indexUsuario,usuario);
+            usuarios.add(usuario);
             valorVendas += carrinhoUsuario.getCustoTotal();
         }
     }
 
     public String relatorioCompras(){
         StringBuilder retorno = new StringBuilder();
-        for (Usuario usuario : usuarios){
+        List<Usuario> resultado = usuarios.stream()
+                .sorted(Comparator.reverseOrder()).toList();
+        for (Usuario usuario : resultado){
             retorno.append(String.format("%-20s | %012d | R$ %5.2f | R$ %5.2f%n", usuario.getNome(),
                     usuario.getQuantidadecompras(), usuario.getValorCompra(), usuario.getValorMedioCompra()));
         }
@@ -87,53 +79,42 @@ public class BusinessLogic {
     }
 
     public boolean adicionaProduto(int codigo, String nomeProduto) {
-        Produto novoProduto = new Produto(codigo,nomeProduto);
-        if (produtosCadastrados.contains(novoProduto)) return false;
-        produtosCadastrados.add(novoProduto);
+        Produto novoProduto = new Produto(nomeProduto);
+        if (produtosCadastrados.get(codigo) != null) return false;
+        produtosCadastrados.put(codigo,novoProduto);
         return true;
     }
 
     public boolean removeProduto(int codigo) {
-        Produto produtoTeste = new Produto(codigo);
-        int indiceProduto = produtosCadastrados.indexOf(produtoTeste);
         boolean podeRemover = true;
         for (Usuario usuario : usuarios){
-            if (usuario.getCarrinho().contemProduto(produtoTeste)){
+            if (usuario.getCarrinho().contemProduto(codigo)){
                 podeRemover = false;
                 break;
             }
         }
-        if (podeRemover) produtosCadastrados.remove(indiceProduto);
+        if (podeRemover) produtosCadastrados.remove(codigo);
         return podeRemover;
     }
 
-    public boolean renomeiaProduto(int codigo, String novoNome) {
-        Produto produtoTeste = new Produto(codigo);
-        int indiceProduto = produtosCadastrados.indexOf(produtoTeste);
-        if (!produtosCadastrados.contains(produtoTeste)) return false;
-        Produto produtoRenomear = produtosCadastrados.get(indiceProduto);
-        produtoRenomear.setNome(novoNome);
-        return true;
+    public void renomeiaProduto(int codigo, String novoNome) {
+        Produto produtoTeste = produtosCadastrados.get(codigo);
+        produtoTeste.setNome(novoNome);
+        produtosCadastrados.put(codigo,produtoTeste);
 
     }
 
-    public boolean alteraPrecoProduto(int codigo, double novoPreco) {
-        Produto produtoTeste = new Produto(codigo);
-        int indiceProduto = produtosCadastrados.indexOf(produtoTeste);
-        if (!produtosCadastrados.contains(produtoTeste)) return false;
-        Produto produtoReprecificar = produtosCadastrados.get(indiceProduto);
-        produtoReprecificar.setPreco(novoPreco);
-        return true;
+    public void alteraPrecoProduto(int codigo, double novoPreco) {
+        Produto produtoTeste = produtosCadastrados.get(codigo);
+        produtoTeste.setPreco(novoPreco);
+        produtosCadastrados.put(codigo,produtoTeste);
     }
 
 
-    public boolean alteraEstoqueProduto(int codigo, int novoEstoque) {
-        Produto produtoTeste = new Produto(codigo);
-        int indiceProduto = produtosCadastrados.indexOf(produtoTeste);
-        if (!produtosCadastrados.contains(produtoTeste)) return false;
-        Produto produtoAlterarEstoque = produtosCadastrados.get(indiceProduto);
-        produtoAlterarEstoque.setEstoque(novoEstoque);
-        return true;
+    public void alteraEstoqueProduto(int codigo, int novoEstoque) {
+        Produto produtoTeste = produtosCadastrados.get(codigo);
+        produtoTeste.setEstoque(novoEstoque);
+        produtosCadastrados.put(codigo,produtoTeste);
     }
 
     public Usuario cadastrarUsuario(String cpf, String senha, String nome) {
@@ -147,5 +128,11 @@ public class BusinessLogic {
             return usuarioTeste;
         }
         return null;
+    }
+
+    public void salvarDados() {
+        DADOS.salvaUsuarios(usuarios,CAMINHO+"usuarios.data");
+        DADOS.salvaProdutos(produtosCadastrados,CAMINHO+"produtos.data");
+        DADOS.salvaValorVenda(CAMINHO+"valorVenda.data",valorVendas);
     }
 }
