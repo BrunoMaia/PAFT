@@ -1,0 +1,54 @@
+tags:
+  - name: auth
+    description: Authentication routes
+  - name: profile
+    description: User profile information
+
+components:
+  schemas:
+    UsernamePassword:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          minLength: 6
+          maxLength: 30
+          example: convidado
+        password:
+          type: string
+          example: $3cret!z
+          minLength: 8
+  
+    Id:
+      type: integer
+      format: int32
+      minimum: 1
+      example: 150
+    
+    Password:
+      type: object
+      required:
+       - password
+      properties:
+        password:
+          type: string
+          example: $3cret
+          minLength: 8
+
+  parameters:
+    Id:
+      in: path
+      name: id
+      description: Unique id
+      required: true
+      schema:
+        $ref: '#/components/schemas/Id'
+  
+  securitySchemes:
+    JWT:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
