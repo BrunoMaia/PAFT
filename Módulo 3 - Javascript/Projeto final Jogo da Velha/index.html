@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="static/normalize.css">
+    <link rel="stylesheet" href="static/style.css">
+    <script defer src="static/main.js"></script>
+    <title></title>
+  </head>
+  <body>
+    <header>
+      <h1>Jogo da Velha</h1>
+      <H4>Escolha seu marcador:</H3>
+        <button id="botaoXis" onclick="trocaJogador(0)">X</button>
+        <button id="botaoBolinha" onclick="trocaJogador(1)">O</button>
+    </header>
+    <main>
+      Tabuleiro:
+      <br>
+      <button id="1" onclick="selecionaCelula(1,true)">☐</button>
+      <button id="2" onclick="selecionaCelula(2,true)">☐</button>
+      <button id="3" onclick="selecionaCelula(3,true)">☐</button>
+      <br>
+      <button id="4" onclick="selecionaCelula(4,true)">☐</button>
+      <button id="5" onclick="selecionaCelula(5,true)">☐</button>
+      <button id="6" onclick="selecionaCelula(6,true)">☐</button>
+      <br>
+      <button id="7" onclick="selecionaCelula(7,true)">☐</button>
+      <button id="8" onclick="selecionaCelula(8,true)">☐</button>
+      <button id="9" onclick="selecionaCelula(9,true)">☐</button>
+      <br>
+    </main>
+    <footer>
+      <br>
+      <button onclick="retornaJogada()">Retorna jogada</button>
+    </footer>
+  </body>
+</html>
